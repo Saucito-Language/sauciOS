@@ -1,0 +1,73 @@
+name: OS Bare-Metal CI Pipeline
+
+on:
+  push:
+    branches: [ "main", "master", "develop" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    name: Build Kernel & Check Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies & Cross-Compiler Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            nasm \
+            gcc-multilib \
+            g++-multilib \
+            gdb \
+            qemu-system-x86 \
+            xorriso \
+            grub-pc-bin \
+            grub-common \
+            cppcheck \
+            cmake \
+            ninja-build
+
+      - name: Check Tool Versions
+        run: |
+          gcc --version
+          nasm -v
+          xorriso -version
+
+      - name: Static Code Analysis (Cppcheck)
+        run: |
+          cppcheck --enable=warning,style,performance,portability \
+                   --suppress=missingIncludeSystem \
+                   --inline-suppr \
+                   -I include/ src/
+
+      - name: Compile Assembly & C Kernel
+        run: |
+          # Ejemplo usando Make (Ajusta la invocación a tu sistema de build)
+          if [ -f Makefile ]; then
+            make clean
+            make all
+          elif [ -f CMakeLists.txt ]; then
+            mkdir build && cd build
+            cmake -G Ninja ..
+            ninja
+          else
+            echo "No se encontró Makefile ni CMakeLists.txt. Compilando prueba genérica..."
+            mkdir -p build
+            nasm -f elf32 src/boot.asm -o build/boot.o || true
+            gcc -m32 -c src/drivers/vga.c -o build/vga.o -ffreestanding -O2 -Wall -Wextra || true
+          fi
+
+      - name: Upload Kernel Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-binary
+          path: |
+            build/*.bin
+            build/*.iso
+            build/*.elf
+          if-no-files-found: warn
