@@ -1,0 +1,22 @@
+# .github/CODEOWNERS
+# Para más información sobre la sintaxis de CODEOWNERS:
+# https://docs.github.com/es/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Por defecto, eres el propietario de todo el repositorio
+* @jorgeivaneisaac-hub
+
+# Control de código de bajo nivel y Drivers
+/src/drivers/         @jorgeivaneisaac-hub
+/src/boot/            @jorgeivaneisaac-hub
+/src/kernel/          @jorgeivaneisaac-hub
+
+# Archivos de Cabecera e Interfaces
+/include/             @jorgeivaneisaac-hub
+
+# Configuración de Build y Scripts del Linker
+/linker.ld            @jorgeivaneisaac-hub
+/Makefile             @jorgeivaneisaac-hub
+/CMakeLists.txt       @jorgeivaneisaac-hub
+
+# Integración Continua y Automatización de GitHub
+/.github/             @jorgeivaneisaac-hub
