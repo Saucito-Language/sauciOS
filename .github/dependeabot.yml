@@ -1,0 +1,32 @@
+# .github/dependabot.yml
+version: 2
+updates:
+  # Mantener actualizadas las GitHub Actions (checkout, upload-artifact, etc.)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    open-pull-requests-limit: 5
+
+  # Si en el futuro agregas submódulos de Git (ej. librerías bare-metal o headers)
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    open-pull-requests-limit: 3
+
+  # Opcional: Si usas CMake para compilar el Kernel
+  - package-ecosystem: "cmake"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "build"
+      include: "scope"
+    open-pull-requests-limit: 3
